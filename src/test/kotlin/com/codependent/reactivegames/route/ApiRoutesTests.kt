@@ -8,10 +8,11 @@ import com.codependent.reactivegames.repository.GamesRepository
 import com.codependent.reactivegames.repository.PlayersRepository
 import com.codependent.reactivegames.web.handler.ApiHandlers
 import com.codependent.reactivegames.web.route.ApiRoutes
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.Mockito
+import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
 import org.springframework.boot.test.mock.mockito.MockBean
@@ -46,37 +47,38 @@ class ApiRoutesTests(@Autowired val context: ApplicationContext) {
     @Test
     fun shouldGetGames() {
         val games = Flux.just(Game("Maniac Mansion"), Game("The Secret of Monkey Island"))
-        Mockito.`when`(gamesRepository.findAll()).thenReturn(games)
-        val body = testWebClient.get().uri("/api/v1/games", 2).accept(APPLICATION_JSON)
+        `when`(gamesRepository.findAll()).thenReturn(games)
+        testWebClient.get().uri("/api/v1/games", 2).accept(APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isOk
                 .expectBody(object : ParameterizedTypeReference<List<Game>>() {})
         //.isEqualTo(customerMap.findAll("Peter"))
-        println(body)
     }
 
     @Test
     fun shouldGetPlayers() {
         val players = Flux.just(Player("Jose"), Player("John"))
-        Mockito.`when`(playersRepository.findAll()).thenReturn(players)
-        val body = testWebClient.get().uri("/api/v1/players", 2).accept(APPLICATION_JSON)
+        `when`(playersRepository.findAll()).thenReturn(players)
+        testWebClient.get().uri("/api/v1/players", 2).accept(APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isOk
                 .expectBody(object : ParameterizedTypeReference<List<Player>>() {})
         //.isEqualTo(customerMap.findAll("Peter"))
-        println(body)
     }
 
     @Test
     fun shouldGetRaffleResults() {
         val raffleResults = Flux.just(RaffleResult(Game("Maniac Mansion"), Player("Jose")))
-        Mockito.`when`(raffleClient.raffleResults()).thenReturn(raffleResults)
-        val body = testWebClient.get().uri("/api/v1/raffleResults", 2).accept(APPLICATION_JSON)
+        `when`(raffleClient.raffleResults()).thenReturn(raffleResults)
+        val result = testWebClient.get().uri("/api/v1/raffleResults", 2).accept(APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isOk
                 .expectBody(object : ParameterizedTypeReference<List<RaffleResult>>() {})
-        //.isEqualTo(customerMap.findAll("Peter"))
-        println(body)
+                .returnResult()
+        //.isEqualTo(raffleResults.collectList())
+        val responseBody: List<RaffleResult>? = result.responseBody
+        Assertions.assertEquals(raffleResults.collectList().block(), responseBody)
+
     }
 
 }
