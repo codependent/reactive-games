@@ -5,6 +5,6 @@ import reactor.core.publisher.Flux
 
 interface PlayersRepository {
 
-    fun get(): Flux<Player>
+    fun findAll(): Flux<Player>
 
 }

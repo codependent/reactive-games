@@ -7,7 +7,7 @@ import reactor.core.publisher.Flux
 @Service
 class PlayersRepositoryImpl : PlayersRepository {
 
-    override fun get() = Flux.just(
+    override fun findAll() = Flux.just(
             Player("Jose"),
             Player("John"),
             Player("Anna"),

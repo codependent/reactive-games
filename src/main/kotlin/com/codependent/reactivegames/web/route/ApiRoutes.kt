@@ -13,7 +13,7 @@ class ApiRoutes(private val apiHandlers: ApiHandlers) {
         "/api/v1".nest {
             GET("/games", apiHandlers::getGames)
             GET("/players", apiHandlers::getPlayers)
-            GET("/raffles", apiHandlers::getRaffleResults)
+            GET("/raffleResults", apiHandlers::getRaffleResults)
         }
     }
 }

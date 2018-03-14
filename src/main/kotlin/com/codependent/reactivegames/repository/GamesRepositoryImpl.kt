@@ -7,7 +7,7 @@ import reactor.core.publisher.Flux
 @Service
 class GamesRepositoryImpl : GamesRepository {
 
-    override fun get() = Flux.just(
+    override fun findAll() = Flux.just(
             Game("The Secret of Monkey Island"),
             Game("The Secret of Monkey Island 2"),
             Game("The Secret of Monkey Island 3"),
