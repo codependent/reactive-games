@@ -9,7 +9,7 @@ class GamesRepositoryImpl : GamesRepository {
 
     override fun findAll(): Flux<Game> {
         return if (Math.random() < 0.5) {
-            Flux.error(RuntimeException("GamesRepository findAll failed"), true)
+            Flux.error(RuntimeException("GamesRepository findAll failed"))
         } else {
             Flux.just(
                     Game("The Secret of Monkey Island"),

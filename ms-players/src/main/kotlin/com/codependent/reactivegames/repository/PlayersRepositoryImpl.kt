@@ -9,7 +9,7 @@ class PlayersRepositoryImpl : PlayersRepository {
 
     override fun findAll(): Flux<Player> {
         return if (Math.random() < 0.5) {
-            Flux.error(RuntimeException("PlayersRepository findAll failed"), true)
+            Flux.error(RuntimeException("PlayersRepository findAll failed"))
         } else {
             Flux.just(
                     Player("Jose"),
