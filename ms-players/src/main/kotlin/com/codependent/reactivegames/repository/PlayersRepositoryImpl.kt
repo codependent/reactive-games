@@ -7,13 +7,18 @@ import reactor.core.publisher.Flux
 @Service
 class PlayersRepositoryImpl : PlayersRepository {
 
-    override fun findAll() = Flux.just(
-            Player("Jose"),
-            Player("John"),
-            Player("Anna"),
-            Player("Charles"),
-            Player("Annie"),
-            Player("Megan")).log()
-
+    override fun findAll(): Flux<Player> {
+        return if (Math.random() < 0.5) {
+            Flux.error(RuntimeException("PlayersRepository findAll failed"), true)
+        } else {
+            Flux.just(
+                    Player("Jose"),
+                    Player("John"),
+                    Player("Anna"),
+                    Player("Charles"),
+                    Player("Annie"),
+                    Player("Megan")).log()
+        }
+    }
 
 }

@@ -8,8 +8,8 @@ import reactor.core.publisher.Flux
 class GamesRepositoryImpl : GamesRepository {
 
     override fun findAll(): Flux<Game> {
-        return if (Math.random() <= 1.0) {
-            Flux.error(RuntimeException("fail"))
+        return if (Math.random() < 0.5) {
+            Flux.error(RuntimeException("GamesRepository findAll failed"), true)
         } else {
             Flux.just(
                     Game("The Secret of Monkey Island"),
