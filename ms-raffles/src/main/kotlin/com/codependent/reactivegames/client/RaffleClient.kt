@@ -10,7 +10,6 @@ import io.github.resilience4j.reactor.circuitbreaker.operator.CircuitBreakerOper
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.server.ServerResponse
 import reactor.core.publisher.Flux
 import java.time.Duration
 import java.util.function.BiFunction

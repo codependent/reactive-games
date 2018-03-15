@@ -23,7 +23,7 @@ import reactor.core.publisher.Flux
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(classes = [ApiRoutes::class, ApiHandlers::class])
 @WebFluxTest
-class ApiRoutesTests(@Autowired val context: ApplicationContext) {
+class ApiRoutesTests(@Autowired private val context: ApplicationContext) {
 
     @MockBean
     private lateinit var gamesRepository: GamesRepository
