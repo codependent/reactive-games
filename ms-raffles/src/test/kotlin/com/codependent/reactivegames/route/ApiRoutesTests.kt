@@ -1,9 +1,9 @@
 package com.codependent.reactivegames.route
 
-import com.codependent.reactivegames.client.RaffleClient
 import com.codependent.reactivegames.dto.Game
 import com.codependent.reactivegames.dto.Player
 import com.codependent.reactivegames.dto.RaffleResult
+import com.codependent.reactivegames.service.RaffleService
 import com.codependent.reactivegames.web.handler.ApiHandlers
 import com.codependent.reactivegames.web.route.ApiRoutes
 import org.junit.jupiter.api.Assertions
@@ -29,7 +29,7 @@ import reactor.core.publisher.Flux
 class ApiRoutesTests(@Autowired private val context: ApplicationContext) {
 
     @MockBean
-    private lateinit var raffleClient: RaffleClient
+    private lateinit var raffleService: RaffleService
 
     private lateinit var testWebClient: WebTestClient
 
@@ -41,7 +41,7 @@ class ApiRoutesTests(@Autowired private val context: ApplicationContext) {
     @Test
     fun shouldGetRaffleResults() {
         val raffleResults = Flux.just(RaffleResult(Game("Maniac Mansion"), Player("Jose")))
-        `when`(raffleClient.raffleResults()).thenReturn(raffleResults)
+        `when`(raffleService.raffle()).thenReturn(raffleResults)
         val result = testWebClient.get().uri("/api/v1/raffleResults", 2).accept(APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isOk
