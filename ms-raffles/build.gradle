@@ -35,8 +35,12 @@ compileTestKotlin {
 	}
 }
 
+ext {
+	resilience4jVersion = '0.13.0-SNAPSHOT'
+}
+
 repositories {
-    maven { url 'http://oss.jfrog.org/artifactory/oss-snapshot-local/' }
+	maven { url 'http://oss.jfrog.org/artifactory/oss-snapshot-local/' }
 	mavenCentral()
 }
 
@@ -45,8 +49,8 @@ dependencies {
 	compile('com.fasterxml.jackson.module:jackson-module-kotlin')
 	compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	compile("org.jetbrains.kotlin:kotlin-reflect")
-    compile "io.github.resilience4j:resilience4j-circuitbreaker:0.12.1-SNAPSHOT"
-    compile "io.github.resilience4j:resilience4j-reactor:0.12.1-SNAPSHOT"
+	compile("io.github.resilience4j:resilience4j-spring-boot2:${resilience4jVersion}")
+	compile("io.github.resilience4j:resilience4j-reactor:${resilience4jVersion}")
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	testCompile('io.projectreactor:reactor-test')
 	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.1.0'

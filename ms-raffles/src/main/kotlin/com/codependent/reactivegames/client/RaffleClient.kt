@@ -6,6 +6,8 @@ import com.codependent.reactivegames.dto.RaffleResult
 import io.github.resilience4j.circuitbreaker.CircuitBreaker
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig
 import io.github.resilience4j.circuitbreaker.CircuitBreakerOpenException
+import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry
+import io.github.resilience4j.circuitbreaker.autoconfigure.CircuitBreakerProperties
 import io.github.resilience4j.reactor.circuitbreaker.operator.CircuitBreakerOperator
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -15,17 +17,26 @@ import java.time.Duration
 import java.util.function.BiFunction
 
 @Component
-class RaffleClient(val webClientBuilder: WebClient.Builder) {
+class RaffleClient(private val webClientBuilder: WebClient.Builder,
+                   private val circuitBreakerRegistry : CircuitBreakerRegistry,
+                   private val circuitBreakerProperties: CircuitBreakerProperties) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
-    private val circuitBreakerConfig: CircuitBreakerConfig = CircuitBreakerConfig.custom()
+    /*private val circuitBreakerConfig: CircuitBreakerConfig = CircuitBreakerConfig.custom()
             .failureRateThreshold(50f)
             .waitDurationInOpenState(Duration.ofMillis(10000))
             .ringBufferSizeInHalfOpenState(5)
             .ringBufferSizeInClosedState(5)
-            .build()
-    private var gamesCircuitBreaker: CircuitBreaker = CircuitBreaker.of("gamesCircuitBreaker", circuitBreakerConfig)
-    private var playersCircuitBreaker: CircuitBreaker = CircuitBreaker.of("playersCircuitBreaker", circuitBreakerConfig)
+            .build()*/
+    private var gamesCircuitBreaker: CircuitBreaker = CircuitBreaker.ofDefaults("gamesCircuitBreaker")
+    private var playersCircuitBreaker: CircuitBreaker = CircuitBreaker.ofDefaults("playersCircuitBreaker")
+
+    init {
+        gamesCircuitBreaker = circuitBreakerRegistry.circuitBreaker("gamesCircuitBreaker") {
+            circuitBreakerProperties.createCircuitBreakerConfig("gamesCircuitBreaker") }
+        playersCircuitBreaker = circuitBreakerRegistry.circuitBreaker("playersCircuitBreaker") {
+            circuitBreakerProperties.createCircuitBreakerConfig("playersCircuitBreaker") }
+    }
 
     fun raffleResults() = Flux.zip<Game, Player, RaffleResult>(
             getGames(), getPlayers(),
@@ -37,6 +48,7 @@ class RaffleClient(val webClientBuilder: WebClient.Builder) {
                 .get().uri("/games").retrieve().bodyToFlux(Game::class.java)
                 .transform(CircuitBreakerOperator.of(gamesCircuitBreaker))
                 .onErrorResume(CircuitBreakerOpenException::class.java, { _ -> Flux.empty() })
+                .onErrorResume(Exception::class.java, { _ -> Flux.empty() })
     }
 
     private fun getPlayers() : Flux<Player> {
@@ -45,5 +57,6 @@ class RaffleClient(val webClientBuilder: WebClient.Builder) {
                 .get().uri("/players").retrieve().bodyToFlux(Player::class.java)
                 .transform(CircuitBreakerOperator.of(playersCircuitBreaker))
                 .onErrorResume(CircuitBreakerOpenException::class.java, { _ -> Flux.empty() })
+                .onErrorResume(Exception::class.java, { _ -> Flux.empty() })
     }
 }

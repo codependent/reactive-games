@@ -1,0 +1,24 @@
+management:
+  endpoint:
+    health:
+      show-details: always
+
+resilience4j:
+  circuitbreaker:
+    backends:
+      gamesCircuitBreaker:
+        ringBufferSizeInClosedState: 5
+        ringBufferSizeInHalfOpenState: 5
+        waitInterval: 5000
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+        waitDurationInOpenState: 10000
+        registerHealthIndicator: true
+      playersCircuitBreaker:
+        ringBufferSizeInClosedState: 5
+        ringBufferSizeInHalfOpenState: 5
+        waitInterval: 5000
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+        waitDurationInOpenState: 10000
+        registerHealthIndicator: true
