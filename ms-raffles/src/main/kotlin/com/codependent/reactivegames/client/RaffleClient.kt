@@ -18,8 +18,7 @@ import java.util.function.BiFunction
 
 @Component
 class RaffleClient(private val webClientBuilder: WebClient.Builder,
-                   private val circuitBreakerRegistry : CircuitBreakerRegistry,
-                   private val circuitBreakerProperties: CircuitBreakerProperties) {
+                   private val circuitBreakerRegistry : CircuitBreakerRegistry) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
     /*private val circuitBreakerConfig: CircuitBreakerConfig = CircuitBreakerConfig.custom()
@@ -28,15 +27,8 @@ class RaffleClient(private val webClientBuilder: WebClient.Builder,
             .ringBufferSizeInHalfOpenState(5)
             .ringBufferSizeInClosedState(5)
             .build()*/
-    private var gamesCircuitBreaker: CircuitBreaker = CircuitBreaker.ofDefaults("gamesCircuitBreaker")
-    private var playersCircuitBreaker: CircuitBreaker = CircuitBreaker.ofDefaults("playersCircuitBreaker")
-
-    init {
-        gamesCircuitBreaker = circuitBreakerRegistry.circuitBreaker("gamesCircuitBreaker") {
-            circuitBreakerProperties.createCircuitBreakerConfig("gamesCircuitBreaker") }
-        playersCircuitBreaker = circuitBreakerRegistry.circuitBreaker("playersCircuitBreaker") {
-            circuitBreakerProperties.createCircuitBreakerConfig("playersCircuitBreaker") }
-    }
+    private var gamesCircuitBreaker: CircuitBreaker = circuitBreakerRegistry.circuitBreaker("gamesCircuitBreaker")
+    private var playersCircuitBreaker: CircuitBreaker = circuitBreakerRegistry.circuitBreaker("playersCircuitBreaker")
 
     fun raffleResults() = Flux.zip<Game, Player, RaffleResult>(
             getGames(), getPlayers(),
